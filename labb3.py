@@ -1,7 +1,6 @@
 import csv
 
 class Support:
-
     def __init__(self, id, kund, kategori, prioritet, status):
         self.id = id
         self.kund = kund
@@ -9,72 +8,40 @@ class Support:
         self.prioritet = prioritet
         self.status = status
 
-    def beskriv(self):
-    
-        return (
-            f"ID: {self.id} | "
-            f"Kund: {self.kund} | "
-            f"Kategori: {self.kategori} | "
-            f"Prioritet: {self.prioritet} | "
-            f"Status: {self.status}"
-        )
+    def high_priority(self):
+        return self.prioritet.lower() == "hög"
 
-tickets = []
+    def __repr__(self):
+        return f"Högprioärende: id={self.id}, kund={self.kund}, kategori={self.kategori}, status={self.status}"
 
-with open("supportarenden.csv", mode="r", encoding="utf-8", newline="") as csvfile:
 
-    reader = csv.DictReader(csvfile)
-    
+with open("supportarenden.csv", "r", encoding="utf-8") as file:
+
+    reader = csv.reader(file)
+    headers = next(reader, None)
+
+    support = {}
+    for h in headers:
+        support[h] = []
+
     for row in reader:
-        ticket = Support(
-            id=row["id"],
-            kund=row["kund"],
-            kategori=row["kategori"],
-            prioritet=row["prioritet"],
-            status=row["status"]
-        )
- 
-        tickets.append(ticket)
+        for h, v in zip(headers, row):
+            support[h].append(v)
 
 
-    for ticket in tickets:
-        print(ticket.beskriv())
+support_objects = []
 
+for i in range(len(support["id"])):
+    obj = Support(
+        id=support["id"][i],
+        kund=support["kund"][i],
+        kategori=support["kategori"][i],
+        prioritet=support["prioritet"][i],
+        status=support["status"][i]
+    )
+    support_objects.append(obj)
 
+hog_prioritet = [obj for obj in support_objects if obj.high_priority()]
 
-
-
-
-
-# supporttickets = []
-
-
-    # def beskrivning(self):
-    #     return(
-    #         f'
-    #     )
-
-
-# with open("supportarenden.csv", newline='', encoding="utf-8") as csvfile:
-
-#     reader = csv.DictReader(csvfile) 
-
-#     for row in reader:
-#        ticket = {
-#             "id": row["id"],
-#             "kund": row["kund"],
-#             "kategori": row["kategori"],
-#             "prioritet": row["prioritet"],
-#             "status": row["status"]}
-#        supporttickets.append(ticket)
-
-# print(supporttickets)
-
-
-#     for row in reader:
-
-#         print(row['id'], row['kund'], row['kategori'], row['prioritet'], row['status'])
- 
-# print(row)
-
-#  id,kund,kategori,prioritet,status
+for customer in hog_prioritet:
+    print(customer)
